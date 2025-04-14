@@ -1,58 +1,197 @@
-.App {
-  font-family: Arial, sans-serif;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: #f4f4f4;
-  min-height: 100vh;
-  padding: 20px;
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f7fb;
+  margin: 0;
+  padding: 0;
 }
 
 h1 {
+  text-align: center;
+  color: #333;
+  margin-top: 30px;
+}
+
+.container {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+}
+
+.upload-section,
+.encryption-section,
+.upload-button {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.upload-section input[type="file"] {
+  width: 80%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: #f9f9f9;
   color: #333;
 }
 
-.upload-section {
-  margin-bottom: 20px;
-}
-
-.files-section {
+.encryption-section input[type="text"] {
   width: 80%;
-}
-
-.file {
-  background-color: #fff;
-  padding: 15px;
-  margin-bottom: 10px;
-  border-radius: 5px;
+  padding: 12px;
   border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: #f9f9f9;
+  color: #333;
+  text-align: center; /* Optional: To center the text inside the input */
 }
 
-button {
+.upload-button button {
+  width: 40%; /* Adjusted to match the width of the input fields */
+  padding: 12px;
   background-color: #007bff;
-  color: white;
+  color: #ffffff;
   border: none;
-  padding: 10px 15px;
-  margin-left: 10px;
-  border-radius: 5px;
+  font-size: 16px;
+  border-radius: 8px;
   cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s;
 }
 
-button:disabled {
-  background-color: #ccc;
+.upload-button button:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+.upload-button button:disabled {
+  background-color: #cccccc;
   cursor: not-allowed;
 }
 
-a {
-  color: #007bff;
-}
-.delete-button {
-  background-color: #fff;
-  color: red;
-  border: none;
-  padding: 10px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
+.files-section .file {
+  background-color: #f8f9fa;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
+.files-section .file p {
+  margin: 10px 0;
+  font-size: 14px;
+  color: #555;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.files-section .file input[type="text"] {
+  width: 80%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  margin-bottom: 15px;
+  background-color: #f9f9f9;
+  color: #333;
+  
+}
+
+.files-section .file button {
+  /* width: 80%; Adjusted to match the width of the input fields */
+  /* padding: 12px; */
+  /* font-size: 16px; */
+  /* margin-top: 10px;
+  margin-bottom: 20px; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40%; /* Adjusted to match the width of the input fields */
+  padding: 12px;
+  background-color: #007bff;
+  color: #ffffff;
+  border: none;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s;
+}
+
+.files-section .file button.decrypt-button {
+  background-color: #17a2b8;
+  color: #fff;
+  margin-top: 10px;
+}
+
+.files-section .file button.decrypt-button:hover {
+  background-color: #117a8b;
+  transform: translateY(-2px);
+}
+
+.files-section .file button.delete-button {
+  background-color: #dc3545;
+  color: #fff;
+  margin-left: 10px;
+}
+
+.files-section .file button.delete-button:hover {
+  background-color: #c82333;
+  transform: translateY(-2px);
+}
+
+.files-section .file a {
+  text-decoration: none;
+  color: #007bff;
+  font-size: 14px;
+}
+
+.files-section .file a:hover {
+  text-decoration: underline;
+}
+
+.no-files {
+  text-align: center;
+  color: #999;
+  font-style: italic;
+}
+
+input::placeholder {
+  color: #888;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 20px;
+  }
+
+  button {
+    font-size: 14px;
+    padding: 12px;
+  }
+
+  .files-section .file p {
+    font-size: 13px;
+  }
+
+  .upload-section input[type="file"] {
+    font-size: 14px;
+  }
+
+  .encryption-section input[type="text"] {
+    font-size: 14px;
+  }
+
+  .files-section .file button {
+    font-size: 14px;
+  }
+}
