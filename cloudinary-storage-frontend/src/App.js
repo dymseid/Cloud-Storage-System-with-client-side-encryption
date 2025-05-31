@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import './App.css';
-import CryptoJS from 'crypto-js';
+import React, { useState, useEffect } from "react";
+import "./App.css";
+import CryptoJS from "crypto-js";
 
 function App() {
   const [file, setFile] = useState(null);
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [encryptionKey, setEncryptionKey] = useState('');  // State to hold the encryption key
-  const [decryptionKey, setDecryptionKey] = useState('');  // State to hold the encryption key
+  const [encryptionKey, setEncryptionKey] = useState(""); // State to hold the encryption key
+  const [decryptionKey, setDecryptionKey] = useState({}); // State to hold the encryption key
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
@@ -17,8 +17,8 @@ function App() {
     setEncryptionKey(event.target.value); // Update encryption key when input changes
   };
 
-  const handleDecryptionKeyChange = (event) => {
-    setDecryptionKey(event.target.value); // Update encryption key when input changes
+  const handleDecryptionKeyChange = (event, publicId) => {
+    setDecryptionKey((prev) => ({ ...prev, [publicId]: event.target.value }));
   };
 
   const encryptFile = (file, key) => {
@@ -36,36 +36,36 @@ function App() {
 
   const handleUpload = async () => {
     if (!file) {
-      alert('Please select a file!');
+      alert("Please select a file!");
       return;
     }
 
     if (!encryptionKey) {
-      alert('Please enter an encryption key!');
+      alert("Please enter an encryption key!");
       return;
     }
 
     try {
       setLoading(true);
-      const encryptedFile = await encryptFile(file, encryptionKey);  // Encrypt using the entered key
+      const encryptedFile = await encryptFile(file, encryptionKey); // Encrypt using the entered key
       const formData = new FormData();
-      formData.append('file', encryptedFile);
+      formData.append("file", encryptedFile);
 
-      const response = await fetch('/upload', {
-        method: 'POST',
+      const response = await fetch("/upload", {
+        method: "POST",
         body: formData,
       });
 
       const result = await response.json();
       if (response.ok) {
-        alert('File uploaded successfully!');
+        alert("File uploaded successfully!");
         setFile(null);
         fetchFiles(); // Refresh the file list after upload
       } else {
-        alert('File upload failed!');
+        alert("File upload failed!");
       }
     } catch (error) {
-      console.error('Error uploading file:', error);
+      console.error("Error uploading file:", error);
     } finally {
       setLoading(false);
     }
@@ -73,48 +73,48 @@ function App() {
 
   const fetchFiles = async () => {
     try {
-      const response = await fetch('/files');
+      const response = await fetch("/files");
       const result = await response.json();
       if (response.ok) {
         setFiles(result.files);
       } else {
-        alert('Failed to fetch files!');
+        alert("Failed to fetch files!");
       }
     } catch (error) {
-      console.error('Error fetching files:', error);
+      console.error("Error fetching files:", error);
     }
   };
 
   const deleteFile = async (public_id) => {
     try {
-      await fetch(`/files/${public_id}`, { method: 'DELETE' });
-      alert('File deleted successfully');
+      await fetch(`/files/${public_id}`, { method: "DELETE" });
+      alert("File deleted successfully");
       fetchFiles(); // Refresh the file list after deletion
     } catch (error) {
-      console.error('Error deleting file:', error);
-      alert('Failed to delete file');
+      console.error("Error deleting file:", error);
+      alert("Failed to delete file");
     }
   };
 
   const decryptFile = (publicId, encryptionKey) => {
     fetch(`/decrypt/${publicId}/${encryptionKey}`)
       .then((response) => {
-        if (!response.ok) throw new Error('Failed to decrypt file');
+        if (!response.ok) throw new Error("Failed to decrypt file");
         return response.blob();
       })
       .then((blob) => {
         const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.style.display = 'none';
+        const a = document.createElement("a");
+        a.style.display = "none";
         a.href = url;
-        a.download = 'decrypted-file.jpeg';
+        a.download = "decrypted-file.jpeg";
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
       })
       .catch((error) => {
-        console.error('Error:', error);
-        alert('Error decrypting file.');
+        console.error("Error:", error);
+        alert("Error decrypting file.");
       });
   };
 
@@ -145,7 +145,7 @@ function App() {
         {/* Upload file button */}
         <div className="upload-button">
           <button onClick={handleUpload} disabled={loading}>
-            {loading ? 'Uploading...' : 'Upload File'}
+            {loading ? "Uploading..." : "Upload File"}
           </button>
         </div>
 
@@ -155,18 +155,41 @@ function App() {
           {files.length > 0 ? (
             files.map((file) => (
               <div key={file.public_id} className="file">
-                <p><strong>Public ID:</strong> {file.public_id}</p>
-                <p><strong>URL:</strong> <a href={file.secure_url} target="_blank" rel="noopener noreferrer">{file.secure_url}</a></p>
-                <button onClick={() => deleteFile(file.public_id)} className="delete-button">
+                <p>
+                  <strong>Public ID:</strong> {file.public_id}
+                </p>
+                <p>
+                  <strong>URL:</strong>{" "}
+                  <a
+                    href={file.secure_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {file.secure_url}
+                  </a>
+                </p>
+                <button
+                  onClick={() => deleteFile(file.public_id)}
+                  className="delete-button"
+                >
                   Delete
                 </button>
                 <input
                   type="text"
-                  value={decryptionKey}
-                  onChange={handleDecryptionKeyChange}
+                  value={decryptionKey[file.public_id] || ""}
+                  onChange={(e) => handleDecryptionKeyChange(e, file.public_id)}
                   placeholder="Enter decryption key"
                 />
-                <button onClick={() => decryptFile(file.public_id, decryptionKey)} className="decrypt-button" disabled={decryptionKey.length === 0}>
+                <button
+                  onClick={() =>
+                    decryptFile(
+                      file.public_id,
+                      decryptionKey[file.public_id] || ""
+                    )
+                  }
+                  className="decrypt-button"
+                  disabled={!decryptionKey[file.public_id]}
+                >
                   Decrypt
                 </button>
               </div>
